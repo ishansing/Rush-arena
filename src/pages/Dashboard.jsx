@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
-import { Search, LogOut, User, Mail, Hash, Phone, CheckCircle2, Trophy, ArrowRight, UserCircle } from 'lucide-react';
+import { Search, LogOut, User, Mail, Hash, Phone, CheckCircle2, Trophy, ArrowRight, UserCircle, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = ({ onLogout }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [participant, setParticipant] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   // Mock data for demonstration
-  const mockParticipants = [
+  const [mockParticipants, setMockParticipants] = useState([
     {
       id: '1',
       regNo: '2024CS101',
       name: 'Aaryan Sharma',
       email: 'aaryan.s@university.edu',
       phone: '+91 98765 43210',
+      attendance: false,
       games: {
         'Mini Game 1': false,
         'Mini Game 2': true,
@@ -32,34 +35,58 @@ const Dashboard = ({ onLogout }) => {
         'Speed Dating': false
       }
     }
-  ];
+  ]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setLoading(true);
+    setUpdateSuccess(false);
     // Simulate API search
     setTimeout(() => {
       const found = mockParticipants.find(p =>
         p.regNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setParticipant(found || 'not_found');
+      setParticipant(found ? { ...found } : 'not_found');
       setLoading(false);
     }, 800);
   };
 
+  const toggleAttendance = () => {
+    if (typeof participant === 'object' && participant) {
+      setParticipant({ ...participant, attendance: !participant.attendance });
+    }
+  };
+
   const toggleGame = (game) => {
-    if (typeof participant === 'object') {
+    if (typeof participant === 'object' && participant) {
       const newGames = { ...participant.games, [game]: !participant.games[game] };
       setParticipant({ ...participant, games: newGames });
     }
   };
 
   const toggleSpecial = (activity) => {
-    if (typeof participant === 'object') {
+    if (typeof participant === 'object' && participant) {
       const newSpecial = { ...participant.special, [activity]: !participant.special[activity] };
       setParticipant({ ...participant, special: newSpecial });
     }
+  };
+
+  const handleUpdate = () => {
+    if (typeof participant !== 'object' || !participant) return;
+
+    setUpdating(true);
+    // Simulate DB Update
+    setTimeout(() => {
+      setMockParticipants(prev =>
+        prev.map(p => p.id === participant.id ? participant : p)
+      );
+      setUpdating(false);
+      setUpdateSuccess(true);
+
+      // Reset success message after 3 seconds
+      setTimeout(() => setUpdateSuccess(false), 3000);
+    }, 1200);
   };
 
   return (
@@ -87,7 +114,9 @@ const Dashboard = ({ onLogout }) => {
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            border: 'none',
+            cursor: 'pointer'
           }}
         >
           <LogOut size={16} /> Sign Out
@@ -127,7 +156,9 @@ const Dashboard = ({ onLogout }) => {
                 color: 'white',
                 borderRadius: '1rem',
                 fontWeight: '600',
-                fontSize: '0.875rem'
+                fontSize: '0.875rem',
+                border: 'none',
+                cursor: 'pointer'
               }}
             >
               {loading ? '...' : 'Search'}
@@ -185,13 +216,59 @@ const Dashboard = ({ onLogout }) => {
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: '1.5rem'
             }}>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', gridColumn: '1 / -1', marginBottom: '0.5rem' }}>
-                <div style={{ padding: '0.75rem', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '1rem', color: 'var(--primary)' }}>
-                  <User size={24} />
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', gridColumn: '1 / -1', marginBottom: '0.5rem', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div style={{ padding: '0.75rem', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '1rem', color: 'var(--primary)' }}>
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontWeight: '700', fontSize: '1.25rem' }}>{participant.name}</h3>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Verified Participant</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 style={{ fontWeight: '700', fontSize: '1.25rem' }}>{participant.name}</h3>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Verified Participant</p>
+
+                {/* Attendance Toggle */}
+                <div
+                  onClick={toggleAttendance}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '1rem',
+                    background: participant.attendance ? 'rgba(16, 185, 129, 0.1)' : '#f1f5f9',
+                    border: `1px solid ${participant.attendance ? 'rgba(16, 185, 129, 0.2)' : '#e2e8f0'}`,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <CalendarCheck size={20} color={participant.attendance ? '#10b981' : '#64748b'} />
+                  <span style={{
+                    fontWeight: '600',
+                    fontSize: '0.875rem',
+                    color: participant.attendance ? '#10b981' : '#64748b'
+                  }}>
+                    {participant.attendance ? 'PRESENT' : 'MARK ATTENDANCE'}
+                  </span>
+                  <div style={{
+                    width: '36px',
+                    height: '20px',
+                    background: participant.attendance ? '#10b981' : '#cbd5e1',
+                    borderRadius: '10px',
+                    position: 'relative',
+                    transition: 'background 0.2s'
+                  }}>
+                    <div style={{
+                      width: '14px',
+                      height: '14px',
+                      background: 'white',
+                      borderRadius: '50%',
+                      position: 'absolute',
+                      top: '3px',
+                      left: participant.attendance ? '19px' : '3px',
+                      transition: 'left 0.2s'
+                    }} />
+                  </div>
                 </div>
               </div>
 
@@ -306,21 +383,52 @@ const Dashboard = ({ onLogout }) => {
                 </div>
 
                 {/* Final Action */}
-                <button style={{
-                  marginTop: 'auto',
-                  padding: '1.25rem',
-                  background: 'var(--text-main)',
-                  color: 'white',
-                  borderRadius: '1rem',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '1rem',
-                  fontSize: '1.125rem'
-                }}>
-                  Update All Changes <ArrowRight size={20} />
-                </button>
+                <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <AnimatePresence>
+                    {updateSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                          padding: '0.75rem',
+                          background: 'rgba(16, 185, 129, 0.1)',
+                          color: '#10b981',
+                          borderRadius: '0.75rem',
+                          fontSize: '0.875rem',
+                          textAlign: 'center',
+                          fontWeight: '600'
+                        }}
+                      >
+                        Changes updated successfully to database!
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <button
+                    onClick={handleUpdate}
+                    disabled={updating}
+                    style={{
+                      padding: '1.25rem',
+                      background: updating ? '#64748b' : 'var(--text-main)',
+                      color: 'white',
+                      borderRadius: '1rem',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '1rem',
+                      fontSize: '1.125rem',
+                      border: 'none',
+                      cursor: updating ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {updating ? 'Saving Changes...' : (
+                      <>Update All Changes <ArrowRight size={20} /></>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -341,3 +449,4 @@ const StarIcon = () => (
 );
 
 export default Dashboard;
+

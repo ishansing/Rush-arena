@@ -1,0 +1,59 @@
+{
+  "admin": {
+    "username": "Rusharena",
+    "password": "Rusharenakaadmin",
+    "role": "admin"
+  },
+  "volunteers": [
+    {
+      "username": "Volunteer01-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer02-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer03-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer04-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer05-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer06-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer07-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer08-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer09-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    },
+    {
+      "username": "Volunteer10-Rusharena",
+      "password": "LCkepaasmai",
+      "role": "volunteer"
+    }
+  ]
+}

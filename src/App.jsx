@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null); // { role: 'admin' | 'volunteer', username: string }
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="app-container">
-      {!isLoggedIn ? (
-        <Login onLogin={() => setIsLoggedIn(true)} />
+      {user.role === 'admin' ? (
+        <AdminDashboard onLogout={handleLogout} />
       ) : (
-        <Dashboard onLogout={() => setIsLoggedIn(false)} />
+        <Dashboard onLogout={handleLogout} />
       )}
     </div>
   );
 }
 
 export default App;
+
