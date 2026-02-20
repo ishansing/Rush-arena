@@ -1,0 +1,32 @@
+{
+  "name": "rush",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soumyaGhoshh/Rush-arena.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soumyaGhoshh/Rush-arena/issues"
+  },
+  "homepage": "https://github.com/soumyaGhoshh/Rush-arena#readme",
+  "description": "",
+  "dependencies": {
+    "framer-motion": "^12.34.2",
+    "lucide-react": "^0.575.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "vite": "^7.3.1"
+  }
+}
